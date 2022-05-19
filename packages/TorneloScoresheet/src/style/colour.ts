@@ -8,6 +8,7 @@ export const colours = {
   negative: '#fa3e2d' as const,
   white: '#ffffff' as const,
   black: '#000000' as const,
+  grey: '#6b6a6e' as const,
   // Brand Colours
   primary: '#00aeef' as const,
   primary20: 'rgba(0, 174, 239, 0.2)' as const,
@@ -25,6 +26,7 @@ export type ColourType = typeof colours[keyof typeof colours];
 
 export const statusBarStyleForColor = (colour: ColourType): StatusBarStyle => {
   switch (colour) {
+    case colours.grey:
     case colours.primary:
     case colours.primary20:
     case colours.secondary:
@@ -51,6 +53,7 @@ export const statusBarStyleForColor = (colour: ColourType): StatusBarStyle => {
  */
 export const textColour = (colour: ColourType): string => {
   switch (colour) {
+    case colours.grey:
     case colours.primary:
     case colours.secondary:
     case colours.negative:
