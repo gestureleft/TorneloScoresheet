@@ -109,6 +109,7 @@ describe('graphical recording moving', () => {
         moveNo: 1,
         whitePly: {
           startingFen: originFen,
+          drawOffer: false,
         },
       },
     ];
@@ -149,9 +150,11 @@ describe('graphical recording moving', () => {
         whitePly: {
           startingFen: '',
           squares: { from: 'a1', to: 'a5' } as PlySquares,
+          drawOffer: false,
         },
         blackPly: {
           startingFen: originFen,
+          drawOffer: false,
         },
       },
     ];

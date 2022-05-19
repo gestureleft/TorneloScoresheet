@@ -31,7 +31,9 @@ export const makeUseTablePairingState =
       setAppModeState({
         mode: AppMode.GraphicalRecording,
         pairing: appModeState.pairing,
-        moveHistory: [{ moveNo: 1, whitePly: { startingFen: fen } }],
+        moveHistory: [
+          { moveNo: 1, whitePly: { startingFen: fen, drawOffer: false } },
+        ],
         board,
         currentPlayer,
       });

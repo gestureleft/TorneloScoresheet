@@ -1,3 +1,4 @@
+import { Moment } from 'moment';
 import { Position } from './ChessBoardPositions';
 import { PlayerColour } from './ChessGameInfo';
 
@@ -18,6 +19,9 @@ export type Piece = {
 export type ChessPly = {
   squares?: PlySquares;
   startingFen: string;
+  // Whether or not a draw was offered
+  drawOffer: boolean;
+  time?: Moment;
 };
 
 export type PlySquares = {

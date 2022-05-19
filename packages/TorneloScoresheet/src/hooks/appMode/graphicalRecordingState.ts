@@ -39,7 +39,7 @@ const processPly = (currentPly: ChessPly): ChessPly | null => {
     return null;
   }
 
-  return { startingFen: nextFen };
+  return { startingFen: nextFen, drawOffer: false };
 };
 
 /**
