@@ -31,6 +31,7 @@ type GraphicalRecordingStateHookType = [
     skipTurn: () => void;
     isOtherPlayersPiece: (move: MoveSquares) => boolean;
     skipTurnAndProcessMove: (move: MoveSquares, promotion?: PieceType) => void;
+    offerDraw: () => void;
   },
 ];
 
@@ -74,6 +75,7 @@ const skipPlayerTurn = (moveHistory: ChessPly[]): ChessPly[] => {
     startingFen: getCurrentFen(moveHistory),
     type: PlyTypes.SkipPly,
     moveNo: Math.floor(moveHistory.length / 2) + 1,
+    drawOffer: false,
     player:
       moveHistory.length % 2 === 0 ? PlayerColour.White : PlayerColour.Black,
   };
@@ -94,6 +96,7 @@ const processPlayerMove = (
   promotion?: PieceType,
 ): ChessPly[] | null => {
   const nextPly: MovePly = {
+    drawOffer: false,
     startingFen: getCurrentFen(moveHistory),
     move: moveSquares,
     type: PlyTypes.MovePly,
@@ -214,6 +217,25 @@ export const makeUseGraphicalRecordingState =
       }
     };
 
+    const offerDraw = () => {
+      setAppModeState(graphicalRecordingState => {
+        // Do nothing if we aren't in graphical recording mode
+        if (graphicalRecordingState.mode !== AppMode.GraphicalRecording) {
+          return graphicalRecordingState;
+        }
+        // Otherwise, update the last move
+        return {
+          ...graphicalRecordingState,
+          moveHistory: graphicalRecordingState.moveHistory.map(
+            (el, index, moveHistory) =>
+              index === moveHistory.length - 1
+                ? { ...el, drawOffer: true }
+                : el,
+          ),
+        };
+      });
+    };
+
     return [
       appModeState,
       {
@@ -226,6 +248,7 @@ export const makeUseGraphicalRecordingState =
         skipTurn: skipTurnFunc,
         isOtherPlayersPiece: isOtherPlayersPieceFunc,
         skipTurnAndProcessMove: skipTurnAndProcessMoveFunc,
+        offerDraw,
       },
     ];
   };
