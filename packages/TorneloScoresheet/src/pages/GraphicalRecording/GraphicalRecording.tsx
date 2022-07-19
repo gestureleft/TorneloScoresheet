@@ -9,7 +9,6 @@ import {
 import ChessBoard from '../../components/ChessBoard/ChessBoard';
 import MoveCard from '../../components/MoveCard/MoveCard';
 import OptionSheet from '../../components/OptionSheet/OptionSheet';
-import PrimaryText from '../../components/PrimaryText/PrimaryText';
 import { useGraphicalRecordingState } from '../../context/AppModeStateContext';
 import {
   BISHOP,
@@ -41,6 +40,7 @@ const GraphicalRecording: React.FC = () => {
   const isOtherPlayersPiece = graphicalRecordingState?.[1].isOtherPlayersPiece;
   const skipTurnAndProcessMove =
     graphicalRecordingState?.[1].skipTurnAndProcessMove;
+  const toggleDraw = graphicalRecordingState?.[1].toggleDraw;
 
   // states
   const [flipBoard, setFlipBoard] = useState(
@@ -49,6 +49,7 @@ const GraphicalRecording: React.FC = () => {
   const [showPromotion, setShowPromotion] = useState(false);
   const [showEndGame, setShowEndGame] = useState(false);
   const [showSignature, setShowSignature] = useState(false);
+  const [showToggleDrawOffer, setShowToggleDrawOffer] = useState(false);
   const goToEndGame = graphicalRecordingState?.[1].goToEndGame;
   const [selectedWinner, setSelectedWinner] = useState<
     undefined | Player | null
@@ -92,7 +93,7 @@ const GraphicalRecording: React.FC = () => {
     {
       text: 'draw',
       onPress: () => {
-        return;
+        setShowToggleDrawOffer(true);
       },
       Icon: ICON_HALF,
       buttonHeight: ButtonHeight.SINGLE,
@@ -137,6 +138,17 @@ const GraphicalRecording: React.FC = () => {
       onPress: () => handleSelectPromotion(PieceType.Bishop),
     },
   ];
+
+  const toggleDrawOptions = graphicalRecordingMode
+    ? [
+        {
+          text: 'Confirm',
+          onPress: () =>
+            handleToggleDraw(graphicalRecordingMode.moveHistory.length - 1),
+          style: { width: '70%' },
+        },
+      ]
+    : [];
 
   const endGameOptions = graphicalRecordingMode
     ? [
@@ -188,6 +200,18 @@ const GraphicalRecording: React.FC = () => {
     setShowSignature(false);
     setShowEndGame(false);
     setSelectedWinner(undefined);
+  };
+
+  const handleCancelToggleDraw = () => {
+    setShowToggleDrawOffer(false);
+  };
+
+  const handleToggleDraw = (drawIndex: number) => {
+    setShowToggleDrawOffer(false);
+    if (!toggleDraw) {
+      return;
+    }
+    toggleDraw(drawIndex);
   };
 
   /**
@@ -261,6 +285,12 @@ const GraphicalRecording: React.FC = () => {
             visible={showEndGame}
             onCancel={handleCancelSelection}
           />
+          <OptionSheet
+            message={'Confirm Toggle Draw'}
+            options={toggleDrawOptions}
+            visible={showToggleDrawOffer}
+            onCancel={handleCancelToggleDraw}
+          />
           <Signature
             visible={showSignature}
             onCancel={handleCancelSelection}
@@ -269,9 +299,9 @@ const GraphicalRecording: React.FC = () => {
           />
 
           {/*----- body ----- */}
-          <View style={{ height: 100, marginLeft: 10 }}>
+          {/* <View style={{ height: 100, marginLeft: 10 }}>
             <PrimaryText label="Placeholder" size={30} />
-          </View>
+          </View> */}
 
           <View style={styles.boardButtonContainer}>
             <ActionBar actionButtons={actionButtons} />
