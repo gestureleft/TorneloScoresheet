@@ -50,7 +50,6 @@ const GraphicalRecording: React.FC = () => {
   const [showPromotion, setShowPromotion] = useState(false);
   const [showEndGame, setShowEndGame] = useState(false);
   const [showSignature, setShowSignature] = useState(false);
-  const [showToggleDrawOffer, setShowToggleDrawOffer] = useState(false);
   const goToEndGame = graphicalRecordingState?.[1].goToEndGame;
   const [selectedWinner, setSelectedWinner] = useState<
     undefined | Player | null
@@ -94,7 +93,12 @@ const GraphicalRecording: React.FC = () => {
     {
       text: 'draw',
       onPress: () => {
-        setShowToggleDrawOffer(true);
+        if (!toggleDraw || !graphicalRecordingMode) {
+          return;
+        }
+        //TODO: In the future this should be changed to the index of the selected move.
+        // Currently it is the most recent move.
+        handleToggleDraw(graphicalRecordingMode.moveHistory.length - 1);
       },
       Icon: ICON_HALF,
       buttonHeight: ButtonHeight.SINGLE,
@@ -139,18 +143,6 @@ const GraphicalRecording: React.FC = () => {
       onPress: () => handleSelectPromotion(PieceType.Bishop),
     },
   ];
-
-  const toggleDrawOptions = graphicalRecordingMode
-    ? [
-        {
-          text: 'Confirm',
-          onPress: () =>
-            handleToggleDraw(graphicalRecordingMode.moveHistory.length - 1),
-          style: { width: '70%' },
-        },
-      ]
-    : [];
-
   const endGameOptions = graphicalRecordingMode
     ? [
         {
@@ -203,12 +195,7 @@ const GraphicalRecording: React.FC = () => {
     setSelectedWinner(undefined);
   };
 
-  const handleCancelToggleDraw = () => {
-    setShowToggleDrawOffer(false);
-  };
-
   const handleToggleDraw = (drawIndex: number) => {
-    setShowToggleDrawOffer(false);
     if (!toggleDraw) {
       return;
     }
@@ -285,12 +272,6 @@ const GraphicalRecording: React.FC = () => {
             options={endGameOptions}
             visible={showEndGame}
             onCancel={handleCancelSelection}
-          />
-          <OptionSheet
-            message={'Confirm Toggle Draw Offer'}
-            options={toggleDrawOptions}
-            visible={showToggleDrawOffer}
-            onCancel={handleCancelToggleDraw}
           />
           <Signature
             visible={showSignature}
