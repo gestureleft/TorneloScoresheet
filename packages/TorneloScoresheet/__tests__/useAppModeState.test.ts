@@ -124,6 +124,7 @@ describe('graphical recording moving', () => {
             move,
             type: PlyTypes.MovePly,
             player: PlayerColour.White,
+            drawOffer: false,
           },
         ],
       });
@@ -142,6 +143,7 @@ describe('graphical recording moving', () => {
         startingFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         move: { from: 'a1', to: 'a5' } as MoveSquares,
         type: PlyTypes.MovePly,
+        drawOffer: false,
       },
     ];
 
@@ -164,6 +166,7 @@ describe('graphical recording moving', () => {
             startingFen:
               'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
             move: { from: 'a1', to: 'a5' } as MoveSquares,
+            drawOffer: false,
           },
           {
             moveNo: 1,
@@ -171,6 +174,7 @@ describe('graphical recording moving', () => {
             type: PlyTypes.MovePly,
             startingFen: originFen,
             move,
+            drawOffer: false,
           },
         ],
       });
@@ -202,6 +206,7 @@ describe('undoing last move', () => {
         startingFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         type: PlyTypes.MovePly,
         move: { from: 'a1', to: 'a5' } as MoveSquares,
+        drawOffer: false,
       },
     ];
     const graphicalState = generateGraphicalRecordingState(moveHistory);
@@ -226,6 +231,7 @@ describe('undoing last move', () => {
         type: PlyTypes.MovePly,
         startingFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         move: { from: 'a1', to: 'a5' } as MoveSquares,
+        drawOffer: false,
       },
       {
         moveNo: 1,
@@ -233,6 +239,7 @@ describe('undoing last move', () => {
         startingFen: 'rnbqkbnr/pppppppp/8/R7/8/8/PPPPPPPP/1NBQKBNR b Kkq - 1 1',
         move: { from: 'h8', to: 'h5' } as MoveSquares,
         type: PlyTypes.MovePly,
+        drawOffer: false,
       },
     ];
     const graphicalState = generateGraphicalRecordingState(moveHistory);
@@ -255,6 +262,7 @@ describe('undoing last move', () => {
             startingFen:
               'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
             move: { from: 'a1', to: 'a5' } as MoveSquares,
+            drawOffer: false,
           },
         ],
       });
@@ -282,6 +290,7 @@ describe('Skipping player turn', () => {
             player: PlayerColour.White,
             startingFen,
             type: PlyTypes.SkipPly,
+            drawOffer: false,
           },
         ],
         board: chessEngine.fenToBoardPositions(resultingFen),
@@ -297,6 +306,7 @@ describe('Skipping player turn', () => {
         startingFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         type: PlyTypes.MovePly,
         move: { from: 'a1', to: 'a5' } as MoveSquares,
+        drawOffer: false,
       },
     ];
     const graphicalState = generateGraphicalRecordingState(moveHistory);
@@ -319,6 +329,7 @@ describe('Skipping player turn', () => {
             player: PlayerColour.Black,
             startingFen,
             type: PlyTypes.SkipPly,
+            drawOffer: false,
           },
         ],
         board: chessEngine.fenToBoardPositions(resultingFen),
@@ -353,6 +364,7 @@ describe('Auto Skip player turn', () => {
             player: PlayerColour.White,
             startingFen,
             type: PlyTypes.SkipPly,
+            drawOffer: false,
           },
           {
             moveNo: 1,
@@ -360,6 +372,7 @@ describe('Auto Skip player turn', () => {
             startingFen: afterSkipResultingFen,
             type: PlyTypes.MovePly,
             move,
+            drawOffer: false,
           },
         ],
         board: chessEngine.fenToBoardPositions(afterMoveResultingFen),
@@ -381,6 +394,7 @@ describe('Auto Skip player turn', () => {
         startingFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         type: PlyTypes.MovePly,
         move: { from: 'a1', to: 'a5' } as MoveSquares,
+        drawOffer: false,
       },
     ];
     const move = { from: 'a5', to: 'a6' } as MoveSquares;
@@ -400,6 +414,7 @@ describe('Auto Skip player turn', () => {
             player: PlayerColour.Black,
             startingFen,
             type: PlyTypes.SkipPly,
+            drawOffer: false,
           },
           {
             moveNo: 2,
@@ -407,6 +422,7 @@ describe('Auto Skip player turn', () => {
             type: PlyTypes.MovePly,
             move,
             startingFen: afterSkipResultingFen,
+            drawOffer: false,
           },
         ],
         board: chessEngine.fenToBoardPositions(afterMoveResultingFen),
@@ -438,6 +454,7 @@ describe('Auto Skip player turn', () => {
             player: PlayerColour.White,
             startingFen,
             type: PlyTypes.SkipPly,
+            drawOffer: false,
           },
         ],
         board: chessEngine.fenToBoardPositions(afterSkipResultingFen),
@@ -458,6 +475,7 @@ describe('Auto Skip player turn', () => {
         startingFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         type: PlyTypes.MovePly,
         move: { from: 'a1', to: 'a5' } as MoveSquares,
+        drawOffer: false,
       },
     ];
     const move = { from: 'a5', to: 'b1' } as MoveSquares;
@@ -477,6 +495,7 @@ describe('Auto Skip player turn', () => {
             player: PlayerColour.Black,
             startingFen,
             type: PlyTypes.SkipPly,
+            drawOffer: false,
           },
         ],
         board: chessEngine.fenToBoardPositions(afterSkipResultingFen),
@@ -498,6 +517,7 @@ describe('Auto Skip player turn', () => {
         startingFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         type: PlyTypes.MovePly,
         move: { from: 'a1', to: 'a5' } as MoveSquares,
+        drawOffer: false,
       },
     ];
     const move = { from: 'a2', to: 'a8' } as MoveSquares;
@@ -520,6 +540,7 @@ describe('Auto Skip player turn', () => {
             player: PlayerColour.Black,
             startingFen,
             type: PlyTypes.SkipPly,
+            drawOffer: false,
           },
           {
             moveNo: 2,
@@ -528,9 +549,192 @@ describe('Auto Skip player turn', () => {
             move,
             promotion: PieceType.Queen,
             startingFen: afterSkipResultingFen,
+            drawOffer: false,
           },
         ],
         board: chessEngine.fenToBoardPositions(afterMoveResultingFen),
+      });
+    });
+  });
+});
+
+describe('Toggle Draw Offer', () => {
+  test('Add draw offer on white move', () => {
+    const moveHistory = [
+      {
+        moveNo: 1,
+        player: PlayerColour.White,
+        startingFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        type: PlyTypes.MovePly,
+        move: { from: 'a1', to: 'a5' } as MoveSquares,
+        drawOffer: false,
+      },
+    ];
+    const graphicalState = generateGraphicalRecordingState(moveHistory);
+    const setContextMock = mockAppModeContext(graphicalState);
+    const graphicalStateHook = renderCustomHook(useGraphicalRecordingState);
+
+    act(() => {
+      graphicalStateHook.current?.[1].toggleDraw(0);
+      expect(setContextMock).toHaveBeenCalledTimes(1);
+      expect(setContextMock).toHaveBeenCalledWith({
+        ...graphicalState,
+        moveHistory: [
+          {
+            moveNo: 1,
+            player: PlayerColour.White,
+            startingFen:
+              'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+            type: PlyTypes.MovePly,
+            move: { from: 'a1', to: 'a5' } as MoveSquares,
+            drawOffer: true,
+          },
+        ],
+      });
+    });
+  });
+
+  test('Remove draw offer on white move', () => {
+    const moveHistory = [
+      {
+        moveNo: 1,
+        player: PlayerColour.White,
+        startingFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        type: PlyTypes.MovePly,
+        move: { from: 'a1', to: 'a5' } as MoveSquares,
+        drawOffer: true,
+      },
+    ];
+    const graphicalState = generateGraphicalRecordingState(moveHistory);
+    const setContextMock = mockAppModeContext(graphicalState);
+    const graphicalStateHook = renderCustomHook(useGraphicalRecordingState);
+
+    act(() => {
+      graphicalStateHook.current?.[1].toggleDraw(0);
+      expect(setContextMock).toHaveBeenCalledTimes(1);
+      expect(setContextMock).toHaveBeenCalledWith({
+        ...graphicalState,
+        moveHistory: [
+          {
+            moveNo: 1,
+            player: PlayerColour.White,
+            startingFen:
+              'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+            type: PlyTypes.MovePly,
+            move: { from: 'a1', to: 'a5' } as MoveSquares,
+            drawOffer: false,
+          },
+        ],
+      });
+    });
+  });
+
+  test('offer draw black move', () => {
+    const moveHistory = [
+      {
+        moveNo: 1,
+        player: PlayerColour.White,
+        type: PlyTypes.MovePly,
+        startingFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        move: { from: 'a1', to: 'a5' } as MoveSquares,
+        drawOffer: false,
+      },
+      {
+        moveNo: 1,
+        player: PlayerColour.Black,
+        startingFen: 'rnbqkbnr/pppppppp/8/R7/8/8/PPPPPPPP/1NBQKBNR b Kkq - 1 1',
+        move: { from: 'h8', to: 'h5' } as MoveSquares,
+        type: PlyTypes.MovePly,
+        drawOffer: false,
+      },
+    ];
+    const graphicalState = generateGraphicalRecordingState(moveHistory);
+    const setContextMock = mockAppModeContext(graphicalState);
+    const graphicalStateHook = renderCustomHook(useGraphicalRecordingState);
+
+    act(() => {
+      graphicalStateHook.current?.[1].undoLastMove();
+      expect(setContextMock).toHaveBeenCalledTimes(1);
+      expect(setContextMock).toHaveBeenCalledWith({
+        ...graphicalState,
+        board: chessEngine.fenToBoardPositions(
+          'rnbqkbnr/pppppppp/8/R7/8/8/PPPPPPPP/1NBQKBNR b Kkq - 1 1',
+        ),
+        moveHistory: [
+          {
+            moveNo: 1,
+            player: PlayerColour.White,
+            type: PlyTypes.MovePly,
+            startingFen:
+              'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+            move: { from: 'a1', to: 'a5' } as MoveSquares,
+            drawOffer: false,
+          },
+          {
+            moveNo: 1,
+            player: PlayerColour.Black,
+            startingFen:
+              'rnbqkbnr/pppppppp/8/R7/8/8/PPPPPPPP/1NBQKBNR b Kkq - 1 1',
+            move: { from: 'h8', to: 'h5' } as MoveSquares,
+            type: PlyTypes.MovePly,
+            drawOffer: true,
+          },
+        ],
+      });
+    });
+  });
+
+  test('remove draw offer black move', () => {
+    const moveHistory = [
+      {
+        moveNo: 1,
+        player: PlayerColour.White,
+        type: PlyTypes.MovePly,
+        startingFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        move: { from: 'a1', to: 'a5' } as MoveSquares,
+        drawOffer: false,
+      },
+      {
+        moveNo: 1,
+        player: PlayerColour.Black,
+        startingFen: 'rnbqkbnr/pppppppp/8/R7/8/8/PPPPPPPP/1NBQKBNR b Kkq - 1 1',
+        move: { from: 'h8', to: 'h5' } as MoveSquares,
+        type: PlyTypes.MovePly,
+        drawOffer: true,
+      },
+    ];
+    const graphicalState = generateGraphicalRecordingState(moveHistory);
+    const setContextMock = mockAppModeContext(graphicalState);
+    const graphicalStateHook = renderCustomHook(useGraphicalRecordingState);
+
+    act(() => {
+      graphicalStateHook.current?.[1].undoLastMove();
+      expect(setContextMock).toHaveBeenCalledTimes(1);
+      expect(setContextMock).toHaveBeenCalledWith({
+        ...graphicalState,
+        board: chessEngine.fenToBoardPositions(
+          'rnbqkbnr/pppppppp/8/R7/8/8/PPPPPPPP/1NBQKBNR b Kkq - 1 1',
+        ),
+        moveHistory: [
+          {
+            moveNo: 1,
+            player: PlayerColour.White,
+            type: PlyTypes.MovePly,
+            startingFen:
+              'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+            move: { from: 'a1', to: 'a5' } as MoveSquares,
+            drawOffer: false,
+          },
+          {
+            moveNo: 1,
+            player: PlayerColour.Black,
+            startingFen:
+              'rnbqkbnr/pppppppp/8/R7/8/8/PPPPPPPP/1NBQKBNR b Kkq - 1 1',
+            move: { from: 'h8', to: 'h5' } as MoveSquares,
+            type: PlyTypes.MovePly,
+            drawOffer: false,
+          },
+        ],
       });
     });
   });
