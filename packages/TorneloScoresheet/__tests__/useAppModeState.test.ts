@@ -577,7 +577,8 @@ describe('Toggle Draw Offer', () => {
     act(() => {
       graphicalStateHook.current?.[1].toggleDraw(0);
       expect(setContextMock).toHaveBeenCalledTimes(1);
-      expect(setContextMock).toHaveBeenCalledWith({
+      expect(typeof setContextMock.mock.calls[0][0]).toBe('function');
+      expect(setContextMock.mock.calls[0][0](graphicalState)).toEqual({
         ...graphicalState,
         moveHistory: [
           {
