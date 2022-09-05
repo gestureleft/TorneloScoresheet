@@ -1,0 +1,14 @@
+name: Testflight Deployment
+
+on:
+  create:
+    tags:
+      - v*
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: cd ./packages/TorneloScoresheet/ios && fastlane beta
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
