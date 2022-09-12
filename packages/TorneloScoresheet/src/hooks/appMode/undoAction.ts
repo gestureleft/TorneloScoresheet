@@ -1,5 +1,7 @@
+import { chessEngine } from '../../chessEngine/chessEngineInterface';
 import { RecordingMode } from '../../types/AppModeState';
 import { UndoActionType, UndoAction } from '../../types/UndoAction';
+import { getCurrentFen } from '../../util/moveHistory';
 
 export const undoAction = (
   state: RecordingMode,
@@ -24,6 +26,17 @@ export const undoAction = (
             ? { ...el, gameTime: action.gameTime }
             : el,
         ),
+      };
+    }
+    case UndoActionType.Move: {
+      const moveHistory = state.moveHistory.filter(
+        (_, index, arr) => index !== arr.length - 1,
+      );
+      const board = chessEngine.fenToBoardPositions(getCurrentFen(moveHistory));
+      return {
+        ...state,
+        moveHistory,
+        board,
       };
     }
     default: {

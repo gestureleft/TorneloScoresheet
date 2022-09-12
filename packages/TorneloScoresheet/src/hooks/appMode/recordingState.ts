@@ -17,6 +17,7 @@ import {
 } from '../../types/ChessMove';
 import { Result } from '../../types/Result';
 import { UndoActionType } from '../../types/UndoAction';
+import { getCurrentFen } from '../../util/moveHistory';
 import { storeRecordingModeData } from '../../util/storage';
 import { undoAction } from './undoAction';
 
@@ -38,35 +39,6 @@ type recordingStateHookType = [
     goToEditMove: (index: number) => void;
   },
 ];
-
-/**
- * Gets the current fen of the game based on move history
- * @param moveHistory array of ChessPly
- * @returns current fen
- */
-const getCurrentFen = (moveHistory: ChessPly[]): string => {
-  // no moves -> starting fen
-  if (moveHistory.length === 0) {
-    return chessEngine.startingFen();
-  }
-
-  // execute last ply to get resulting fen
-  const lastPly = moveHistory[moveHistory.length - 1]!;
-
-  // Last ply = SkipPly
-  if (lastPly.type === PlyTypes.SkipPly) {
-    return chessEngine.skipTurn(lastPly.startingFen);
-  }
-
-  // Last ply = MovePly
-  return (
-    chessEngine.makeMove(
-      lastPly.startingFen,
-      lastPly.move,
-      lastPly.promotion,
-    ) ?? '' // all move in history are legal, -> should never return undef
-  );
-};
 
 /**
  * Skips a player's turn
@@ -198,15 +170,35 @@ export const makeUseRecordingState =
     };
 
     const move = (moveSquares: MoveSquares, promotion?: PieceType): void => {
-      const moveHistory = processPlayerMove(
-        moveSquares,
-        appModeState.moveHistory,
-        promotion,
-      );
-      if (moveHistory !== null) {
-        updateBoard(moveHistory);
-      }
+      setAppModeState(state => {
+        if (state.mode !== AppMode.Recording) {
+          return state;
+        }
+        const moveHistory = processPlayerMove(
+          moveSquares,
+          state.moveHistory,
+          promotion,
+        );
+        if (moveHistory === null) {
+          return state;
+        }
+        const board = chessEngine.fenToBoardPositions(
+          getCurrentFen(moveHistory),
+        );
+
+        return {
+          ...state,
+          board,
+          moveHistory,
+          undoStack: state.undoStack.concat([
+            {
+              type: UndoActionType.Move,
+            },
+          ]),
+        };
+      });
     };
+
     const isPawnPromotion = (moveSquares: MoveSquares): boolean => {
       const fen = getCurrentFen(appModeState.moveHistory);
       return chessEngine.isPawnPromotion(fen, moveSquares);
@@ -235,7 +227,25 @@ export const makeUseRecordingState =
     };
 
     const skipTurn = (): void => {
-      updateBoard(skipPlayerTurn(appModeState.moveHistory));
+      setAppModeState(state => {
+        if (state.mode !== AppMode.Recording) {
+          return state;
+        }
+        const moveHistory = skipPlayerTurn(state.moveHistory);
+        const board = chessEngine.fenToBoardPositions(
+          getCurrentFen(moveHistory),
+        );
+        return {
+          ...state,
+          moveHistory,
+          board,
+          undoStack: state.undoStack.concat([
+            {
+              type: UndoActionType.Move,
+            },
+          ]),
+        };
+      });
     };
 
     const isOtherPlayersPiece = (moveSquares: MoveSquares): boolean => {
