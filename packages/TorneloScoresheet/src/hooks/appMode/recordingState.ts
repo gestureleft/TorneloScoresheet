@@ -26,7 +26,7 @@ type recordingStateHookType = [
     goToTextInput: () => void;
     goToArbiterGameMode: () => void;
     move: (moveSquares: MoveSquares, promotion?: PieceType) => void;
-    undoLastMove: () => void;
+    undoLastAction: () => void;
     isPawnPromotion: (moveSquares: MoveSquares) => boolean;
     skipTurn: () => void;
     isOtherPlayersPiece: (move: MoveSquares) => boolean;
@@ -212,7 +212,7 @@ export const makeUseRecordingState =
       return chessEngine.isPawnPromotion(fen, moveSquares);
     };
 
-    const undoLastMove = (): void => {
+    const undoLastAction = (): void => {
       updateBoard(appModeState.moveHistory.slice(0, -1));
     };
 
@@ -299,7 +299,7 @@ export const makeUseRecordingState =
         goToTextInput,
         goToArbiterGameMode,
         move,
-        undoLastMove,
+        undoLastAction,
         isPawnPromotion,
         skipTurn,
         isOtherPlayersPiece,

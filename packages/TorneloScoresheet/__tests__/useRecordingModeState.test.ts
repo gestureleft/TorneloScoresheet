@@ -127,7 +127,7 @@ describe('undoing last move', () => {
     const graphicalStateHook = renderCustomHook(useRecordingState);
 
     act(() => {
-      graphicalStateHook.current?.[1].undoLastMove();
+      graphicalStateHook.current?.[1].undoLastAction();
       expect(setContextMock).toHaveBeenCalledTimes(1);
       expect(setContextMock).toHaveBeenCalledWith({
         ...graphicalState,
@@ -153,7 +153,7 @@ describe('undoing last move', () => {
     const graphicalStateHook = renderCustomHook(useRecordingState);
 
     act(() => {
-      graphicalStateHook.current?.[1].undoLastMove();
+      graphicalStateHook.current?.[1].undoLastAction();
       expect(setContextMock).toHaveBeenCalledTimes(1);
       expect(setContextMock).toHaveBeenCalledWith({
         ...graphicalState,
@@ -188,7 +188,7 @@ describe('undoing last move', () => {
     const graphicalStateHook = renderCustomHook(useRecordingState);
 
     act(() => {
-      graphicalStateHook.current?.[1].undoLastMove();
+      graphicalStateHook.current?.[1].undoLastAction();
       expect(setContextMock).toHaveBeenCalledTimes(1);
       expect(setContextMock).toHaveBeenCalledWith({
         ...graphicalState,
