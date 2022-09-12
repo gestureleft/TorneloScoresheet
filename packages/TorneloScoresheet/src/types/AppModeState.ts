@@ -1,6 +1,7 @@
 import { BoardPosition } from './ChessBoardPositions';
 import { ChessGameInfo, ChessGameResult, PlayerColour } from './ChessGameInfo';
 import { ChessPly } from './ChessMove';
+import { UndoAction } from './UndoAction';
 
 export enum AppMode {
   EnterPgn,
@@ -68,6 +69,7 @@ export type RecordingMode = {
   board: BoardPosition[];
   currentPlayer: PlayerColour;
   type: 'Graphical' | 'Text';
+  undoStack: UndoAction[];
 };
 
 export type EditingMoveMode = {

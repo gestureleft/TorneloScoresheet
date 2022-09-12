@@ -91,6 +91,7 @@ export const makeUseArbiterResultDisplayState =
             getLastFen(moveHistory) ?? chessEngine.startingFen(),
           ),
           type: 'Graphical',
+          undoStack: [],
         });
         return succ('');
       } else {

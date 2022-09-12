@@ -17,7 +17,9 @@ import {
   SkipPly,
 } from '../../types/ChessMove';
 import { Result } from '../../types/Result';
+import { UndoActionType } from '../../types/UndoAction';
 import { storeRecordingModeData } from '../../util/storage';
+import { undoAction } from './undoAction';
 
 type recordingStateHookType = [
   recordingMode,
@@ -213,7 +215,25 @@ export const makeUseRecordingState =
     };
 
     const undoLastAction = (): void => {
-      updateBoard(appModeState.moveHistory.slice(0, -1));
+      setAppModeState(state => {
+        if (state.mode !== AppMode.Recording) {
+          return state;
+        }
+        const action = state.undoStack.at(-1);
+
+        if (!action) {
+          return state;
+        }
+
+        const updatedState = undoAction(state, action);
+
+        return {
+          ...updatedState,
+          undoStack: state.undoStack.filter(
+            (_, index) => index !== state.undoStack.length - 1,
+          ),
+        };
+      });
     };
 
     const skipTurn = (): void => {
@@ -264,6 +284,12 @@ export const makeUseRecordingState =
           moveHistory: recordingState.moveHistory.map((el, index) =>
             index === drawIndex ? { ...el, drawOffer: !el.drawOffer } : el,
           ),
+          undoStack: recordingState.undoStack.concat([
+            {
+              type: UndoActionType.ToggleDrawOffer,
+              indexOfPlyInHistory: drawIndex,
+            },
+          ]),
         };
       });
     };

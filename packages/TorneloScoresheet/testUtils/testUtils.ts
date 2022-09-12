@@ -80,6 +80,7 @@ export const generateRecordingState = (
     ),
     currentPlayer: PlayerColour.White,
     type: recordingModeType,
+    undoStack: [],
   };
 };
 

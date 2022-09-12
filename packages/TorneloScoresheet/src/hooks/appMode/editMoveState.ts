@@ -183,6 +183,8 @@ export const makeUseEditMoveState =
           pairing: appModeState.pairing,
           board: chessEngine.fenToBoardPositions(nextFen),
           type: 'Graphical',
+          // TODO: Persist the undo stack so we can restore it here
+          undoStack: [],
         });
       }
     };
@@ -235,6 +237,8 @@ export const makeUseEditMoveState =
           pairing: appModeState.pairing,
           currentPlayer,
           type: 'Graphical',
+          // TODO: Persist the undo stack so we can restore it here
+          undoStack: [],
         });
       }
     };

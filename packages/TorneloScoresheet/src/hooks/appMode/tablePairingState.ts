@@ -43,6 +43,7 @@ export const makeUseTablePairingState =
         startTime: new Date().getTime(),
         currentPlayer,
         type: 'Graphical',
+        undoStack: [],
       });
     };
 
