@@ -16,6 +16,16 @@ export const undoAction = (
         ),
       };
     }
+    case UndoActionType.EditTimeForMove: {
+      return {
+        ...state,
+        moveHistory: state.moveHistory.map((el, index) =>
+          index === action.indexOfPlyInHistory
+            ? { ...el, gameTime: action.gameTime }
+            : el,
+        ),
+      };
+    }
     default: {
       console.log('Unimplemented undo action requested: ', action);
       return state;

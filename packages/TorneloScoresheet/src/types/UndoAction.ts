@@ -21,7 +21,7 @@ export type ToggleDrawOfferAction = {
 export type EditTimeForMoveAction = {
   type: UndoActionType.EditTimeForMove;
   indexOfPlyInHistory: number;
-  previousGameTime?: GameTime;
+  gameTime?: GameTime;
 };
 
 export type MoveAction = {
@@ -30,6 +30,6 @@ export type MoveAction = {
 
 export type UndoAction =
   | ReplaceMovesAction
-  | ReplaceMovesAction
+  | EditTimeForMoveAction
   | ToggleDrawOfferAction
   | MoveAction;

@@ -5,13 +5,7 @@ import ChessBoard from '../../components/ChessBoard/ChessBoard';
 import MoveCard from '../../components/MoveCard/MoveCard';
 import { useRecordingState } from '../../context/AppModeStateContext';
 import { PlayerColour } from '../../types/ChessGameInfo';
-import {
-  PieceType,
-  MoveSquares,
-  ChessPly,
-  Move,
-  GameTime,
-} from '../../types/ChessMove';
+import { PieceType, MoveSquares, ChessPly, Move } from '../../types/ChessMove';
 import { styles } from './style';
 import MoveOptionsSheet, { EditingMove } from './MoveOptionsSheet';
 import GraphicalModePlayerCard from '../../components/GraphicalModePlayerCard/GraphicalModePlayerCard';
@@ -19,7 +13,6 @@ import TimePickerSheet from '../../components/TimePickerSheet/TimePickerSheet';
 import Actions from './Actions';
 import PromotionSheet from './PromotionSheet';
 import EndGameSheet from './EndGameSheet';
-import { RecordingMode } from '../../types/AppModeState';
 
 const GraphicalRecording: React.FC = () => {
   // app mode hook unpacking
@@ -27,7 +20,6 @@ const GraphicalRecording: React.FC = () => {
   const recordingMode = recordingState?.[0];
   const makeMove = recordingState?.[1].move;
   const isPawnPromotion = recordingState?.[1].isPawnPromotion;
-  const setGameTime = recordingState?.[1].setGameTime;
   const isOtherPlayersPiece = recordingState?.[1].isOtherPlayersPiece;
   const skipTurnAndProcessMove = recordingState?.[1].skipTurnAndProcessMove;
 
@@ -36,13 +28,10 @@ const GraphicalRecording: React.FC = () => {
     recordingMode?.currentPlayer === PlayerColour.Black,
   );
   const [showPromotion, setShowPromotion] = useState(false);
-  const [showTimeSheet, setShowTimeSheet] = useState(false);
   const [showEndGame, setShowEndGame] = useState(false);
-  const [moveGameTime, setMoveGameTime] = useState<GameTime>({
-    hours: 0,
-    minutes: 0,
-  });
-  const [moveGameTimeIndex, setMoveGameTimeIndex] = useState(0);
+  const [moveGameTimeIndex, setMoveGameTimeIndex] = useState<
+    number | undefined
+  >(undefined);
 
   // Scroll view ref
   const scrollRef = useRef<ScrollView>(null);
@@ -101,8 +90,6 @@ const GraphicalRecording: React.FC = () => {
   const showSelectGameTimeSheet = (index: number): void => {
     // store index, set the current game time for that move, then show sheet
     setMoveGameTimeIndex(index);
-    setMoveGameTime(getMoveGameTime(recordingMode, index));
-    setShowTimeSheet(true);
   };
 
   useEffect(() => {
@@ -133,15 +120,8 @@ const GraphicalRecording: React.FC = () => {
             dismiss={handleDismissMoveOptions}
           />
           <TimePickerSheet
-            dismiss={() => setShowTimeSheet(false)}
-            visible={showTimeSheet}
-            gameTime={moveGameTime}
-            setGameTime={(gameTime: GameTime | undefined) => {
-              if (setGameTime) {
-                setGameTime(moveGameTimeIndex, gameTime);
-              }
-              setShowTimeSheet(false);
-            }}
+            dismiss={() => setMoveGameTimeIndex(undefined)}
+            indexOfMoveBeingEdited={moveGameTimeIndex}
           />
           {/*----- body ----- */}
           <View style={styles.playerCardsContainer}>
@@ -203,41 +183,5 @@ const moves = (ply: ChessPly[]): Move[] =>
       .slice(0, -1)
       .concat({ white: acc[acc.length - 1]!.white, black: el });
   }, [] as Move[]);
-
-/**
- * Gets the game time associated with the move index stored
- * Will return the time since the start of the game if the current move has no time
- * @param currentState - the current game state
- * @param moveIndex - the index of the move to get the game time for
- * @returns The game time
- */
-const getMoveGameTime = (
-  currentState: RecordingMode | undefined,
-  moveIndex: number,
-): GameTime => {
-  if (!currentState) {
-    // un reachable code, graphical state should never be null
-    return { hours: 0, minutes: 0 };
-  }
-  const gameTime = currentState.moveHistory[moveIndex]?.gameTime;
-
-  // return gameTime associated with move if it exists else current game time
-  return gameTime ? gameTime : getCurrentGameTime(currentState);
-};
-
-/**
- * Calculates the game time since the game started
- * @returns the game time
- */
-const getCurrentGameTime = (currentState: RecordingMode): GameTime => {
-  const totalMiliseconds = new Date().getTime() - currentState.startTime;
-  const totalMinutes = totalMiliseconds / (1000 * 60);
-
-  // calculate time since start
-  return {
-    hours: totalMinutes / 60,
-    minutes: totalMinutes % 60,
-  };
-};
 
 export default GraphicalRecording;
