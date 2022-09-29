@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { measure, pointIsWithinView } from '../../../util/measure';
+import { Position } from '../../../types/ChessBoardPositions';
+import { isGenericTypeAnnotation } from '@babel/types';
 
 type DragAndDropContextState = {
   dropTargetRefs: [React.RefObject<View>, (data: unknown) => Promise<void>][];
@@ -85,6 +87,51 @@ export const useHitTest = (
     await targetDroppedOn.callback(data);
     onMiss();
   };
+};
+
+type ClickToMoveContextState = {
+  fromSquare: unknown | null;
+  toSquare: unknown | null;
+};
+const ClickToMoveContext = React.createContext<
+  [
+    ClickToMoveContextState,
+    React.Dispatch<React.SetStateAction<ClickToMoveContextState>>,
+  ]
+>([{ fromSquare: null, toSquare: null }, () => undefined]);
+
+type clickToMoveHook = {
+  registerSquare: (postiion: unknown) => void;
+};
+
+export const useClickToMove = (): clickToMoveHook => {
+  const [clickToMoveState, setClickToMoveState] =
+    useContext(ClickToMoveContext);
+
+  const registerSquare = (postition: unknown) => {
+    if (clickToMoveState.fromSquare === null) {
+      console.log('registering from square: ' + postition);
+      setClickToMoveState({ ...clickToMoveState, fromSquare: postition });
+    } else {
+      setClickToMoveState({ ...clickToMoveState, toSquare: postition });
+      console.log('registered to squre: ' + postition);
+      setClickToMoveState({ fromSquare: null, toSquare: null });
+    }
+  };
+
+  return { registerSquare };
+};
+export const ClickToMoveContextProvider: React.FC = ({ children }) => {
+  const dragAndDropState = useState<ClickToMoveContextState>({
+    fromSquare: null,
+    toSquare: null,
+  });
+
+  return (
+    <ClickToMoveContext.Provider value={dragAndDropState}>
+      <View>{children}</View>
+    </ClickToMoveContext.Provider>
+  );
 };
 
 const DragAndDropContextProvider: React.FC = ({ children }) => {
