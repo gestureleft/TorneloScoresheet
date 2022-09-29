@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { measure, pointIsWithinView } from '../../../util/measure';
 import { Position } from '../../../types/ChessBoardPositions';
 import { isGenericTypeAnnotation } from '@babel/types';
+import { MoveSquares } from '../../../types/ChessMove';
 
 type DragAndDropContextState = {
   dropTargetRefs: [React.RefObject<View>, (data: unknown) => Promise<void>][];
@@ -101,26 +102,42 @@ const ClickToMoveContext = React.createContext<
 >([{ fromSquare: null, toSquare: null }, () => undefined]);
 
 type clickToMoveHook = {
-  registerSquare: (postiion: unknown) => void;
+  registerSquare: (postiion: Position | null) => void;
+  getFromSquare: () => Position | unknown | null;
 };
 
-export const useClickToMove = (): clickToMoveHook => {
+export const useClickToMove = (
+  onMove: (moveSquares: MoveSquares) => Promise<void>,
+): clickToMoveHook => {
   const [clickToMoveState, setClickToMoveState] =
     useContext(ClickToMoveContext);
 
-  const registerSquare = (postition: unknown) => {
+  const registerSquare = (position: Position | null) => {
     if (clickToMoveState.fromSquare === null) {
-      console.log('registering from square: ' + postition);
-      setClickToMoveState({ ...clickToMoveState, fromSquare: postition });
+      console.log('registering from square: ' + position);
+      setClickToMoveState({ ...clickToMoveState, fromSquare: position });
     } else {
-      setClickToMoveState({ ...clickToMoveState, toSquare: postition });
-      console.log('registered to squre: ' + postition);
+      setClickToMoveState({ ...clickToMoveState, toSquare: position });
+      console.log('registered to squre: ' + position);
+      if (clickToMoveState.fromSquare !== position) {
+        //attempt to move
+        onMove({
+          from: clickToMoveState.fromSquare as Position,
+          to: position as Position,
+        });
+      }
       setClickToMoveState({ fromSquare: null, toSquare: null });
     }
   };
 
-  return { registerSquare };
+  const getFromSquare = (): Position | unknown | null => {
+    const from = clickToMoveState.fromSquare;
+    return from;
+  };
+
+  return { registerSquare, getFromSquare };
 };
+
 export const ClickToMoveContextProvider: React.FC = ({ children }) => {
   const dragAndDropState = useState<ClickToMoveContextState>({
     fromSquare: null,
