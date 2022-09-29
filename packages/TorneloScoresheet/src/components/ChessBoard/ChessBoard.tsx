@@ -1,4 +1,5 @@
 import React from 'react';
+import { TouchableOpacity } from 'react-native';
 import { colours } from '../../style/colour';
 import {
   BoardPosition,
@@ -7,7 +8,11 @@ import {
 } from '../../types/ChessBoardPositions';
 import { MoveSquares } from '../../types/ChessMove';
 import { CHESS_SQUARE_SIZE } from '../ChessSquare/ChessSquare';
-import DragAndDropContextProvider from '../DragAndDrop/DragAndDropContext/DragAndDropContext';
+import ConditionalWrapper from '../ConditionalWrapper/ConditionalWrapper';
+import DragAndDropContextProvider, {
+  ClickToMoveContextProvider,
+  useClickToMove,
+} from '../DragAndDrop/DragAndDropContext/DragAndDropContext';
 import Draggable from '../DragAndDrop/Draggable/Draggable';
 import DropTarget from '../DragAndDrop/DropTarget/DropTarget';
 import PieceAsset from '../PieceAsset/PieceAsset';
@@ -80,41 +85,68 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   };
 
   return (
-    <DragAndDropContextProvider>
-      <RoundedView style={styles.board}>
-        {/* Pieces */}
-        {positions.map((position, rowIdx) => {
-          return (
-            position.piece !== null && (
-              <Draggable
-                data={position.position}
-                key={rowIdx}
-                style={positionStyle(position.position, flipBoard ?? false)}>
-                <PieceAsset piece={position.piece} size={CHESS_SQUARE_SIZE} />
-              </Draggable>
-            )
-          );
-        })}
-        {/* Board Squares */}
-        {(!flipBoard ? reverseRowOrder(positions) : positions).map(
-          (square, rowIndex) => {
+    <ClickToMoveContextProvider>
+      <DragAndDropContextProvider>
+        <RoundedView style={styles.board}>
+          {/* Pieces */}
+          {positions.map((position, rowIdx) => {
             return (
-              <DropTarget
-                onDrop={(data: unknown) =>
-                  onMove({ from: data as Position, to: square.position })
-                }
-                key={rowIndex}
-                style={[
-                  styles.boardSquare,
-                  { backgroundColor: squareColour(square.position) },
-                ]}
-              />
+              position.piece !== null && (
+                <Draggable
+                  data={position.position}
+                  key={rowIdx}
+                  style={positionStyle(position.position, flipBoard ?? false)}>
+                  <PieceAsset piece={position.piece} size={CHESS_SQUARE_SIZE} />
+                </Draggable>
+              )
             );
-          },
-        )}
-      </RoundedView>
-    </DragAndDropContextProvider>
+          })}
+          {/* Board Squares */}
+          {(!flipBoard ? reverseRowOrder(positions) : positions).map(
+            (square, rowIndex) => {
+              return (
+                <ConditionalWrapper
+                  condition={square.piece === null}
+                  wrap={children => {
+                    return (
+                      <Clickable
+                        position={square.position}
+                        key={square.position}>
+                        {children}
+                      </Clickable>
+                    );
+                  }}>
+                  <DropTarget
+                    onDrop={(data: unknown) =>
+                      onMove({ from: data as Position, to: square.position })
+                    }
+                    key={rowIndex}
+                    style={[
+                      styles.boardSquare,
+                      { backgroundColor: squareColour(square.position) },
+                    ]}
+                  />
+                </ConditionalWrapper>
+              );
+            },
+          )}
+        </RoundedView>
+      </DragAndDropContextProvider>
+    </ClickToMoveContextProvider>
   );
 };
 
+export type clickableParams = {
+  position: Position;
+};
+const Clickable: React.FC<clickableParams> = ({ position, children }) => {
+  const { registerSquare } = useClickToMove();
+  return (
+    <TouchableOpacity
+      style={{ zIndex: -1 }}
+      onPress={() => registerSquare(position)}>
+      {children}
+    </TouchableOpacity>
+  );
+};
 export default ChessBoard;

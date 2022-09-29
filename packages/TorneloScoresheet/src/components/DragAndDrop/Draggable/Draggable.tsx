@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { StyleProp, View, ViewStyle } from 'react-native';
+import { StyleProp, View, TouchableOpacity, ViewStyle } from 'react-native';
 import {
   PanGestureHandlerGestureEvent,
   PanGestureHandler,
@@ -12,8 +12,11 @@ import Animated, {
   useAnimatedStyle,
   runOnJS,
 } from 'react-native-reanimated';
-import { useHitTest } from '../DragAndDropContext/DragAndDropContext';
-
+import { Position } from '../../../types/ChessBoardPositions';
+import {
+  useClickToMove,
+  useHitTest,
+} from '../DragAndDropContext/DragAndDropContext';
 type DraggableProps = {
   data: unknown;
   style?: StyleProp<ViewStyle>;
@@ -25,6 +28,7 @@ const Draggable: React.FC<DraggableProps> = ({ children, data, style }) => {
   const y = useSharedValue(startingPosition);
   const z = useSharedValue(0);
   const viewRef = useRef<View>(null);
+  const { registerSquare } = useClickToMove();
 
   const hitTest = useHitTest(viewRef, data, () => {
     x.value = withSpring(0, { damping: 200, stiffness: 900 });
@@ -56,13 +60,15 @@ const Draggable: React.FC<DraggableProps> = ({ children, data, style }) => {
   }));
 
   return (
-    <PanGestureHandler onGestureEvent={eventHandler}>
-      <Animated.View style={animatedStyle}>
-        <View style={style} ref={viewRef}>
-          {children}
-        </View>
-      </Animated.View>
-    </PanGestureHandler>
+    <TouchableOpacity onPress={() => registerSquare(data as Position)}>
+      <PanGestureHandler onGestureEvent={eventHandler}>
+        <Animated.View style={animatedStyle}>
+          <View style={style} ref={viewRef}>
+            {children}
+          </View>
+        </Animated.View>
+      </PanGestureHandler>
+    </TouchableOpacity>
   );
 };
 
