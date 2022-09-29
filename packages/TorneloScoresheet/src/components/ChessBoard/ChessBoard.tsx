@@ -1,5 +1,5 @@
-import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import React, { useContext } from 'react';
+import { TouchableOpacity, View } from 'react-native';
 import { colours } from '../../style/colour';
 import {
   BoardPosition,
@@ -95,6 +95,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                 <Draggable
                   data={position.position}
                   key={rowIdx}
+                  onMove={onMove}
                   style={positionStyle(position.position, flipBoard ?? false)}>
                   <PieceAsset piece={position.piece} size={CHESS_SQUARE_SIZE} />
                 </Draggable>
@@ -110,6 +111,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                   wrap={children => {
                     return (
                       <Clickable
+                        onMove={onMove}
                         position={square.position}
                         key={square.position}>
                         {children}
@@ -138,15 +140,35 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
 
 export type clickableParams = {
   position: Position;
+  onMove: (moveSquares: MoveSquares) => Promise<void>;
 };
-const Clickable: React.FC<clickableParams> = ({ position, children }) => {
-  const { registerSquare } = useClickToMove();
+const Clickable: React.FC<clickableParams> = ({
+  position,
+  onMove,
+  children,
+}) => {
+  const { registerSquare, getFromSquare } = useClickToMove(onMove);
+  //console.log('FROM: ', getFromSquare());
   return (
+    /*<ConditionalWrapper
+      condition={position === getFromSquare()}
+      wrap={children => {
+        return (
+          <View
+            style={[
+              styles.boardSquare,
+              { backgroundColor: colours.lightGreen, zIndex: 5 },
+            ]}>
+            {children}
+          </View>
+        );
+      }}>*/
     <TouchableOpacity
       style={{ zIndex: -1 }}
       onPress={() => registerSquare(position)}>
       {children}
     </TouchableOpacity>
+    //</ConditionalWrapper>
   );
 };
 export default ChessBoard;

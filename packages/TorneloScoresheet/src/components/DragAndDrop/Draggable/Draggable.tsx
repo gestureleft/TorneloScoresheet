@@ -13,6 +13,7 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import { Position } from '../../../types/ChessBoardPositions';
+import { MoveSquares } from '../../../types/ChessMove';
 import {
   useClickToMove,
   useHitTest,
@@ -20,15 +21,21 @@ import {
 type DraggableProps = {
   data: unknown;
   style?: StyleProp<ViewStyle>;
+  onMove: (moveSquares: MoveSquares) => Promise<void>;
 };
 
-const Draggable: React.FC<DraggableProps> = ({ children, data, style }) => {
+const Draggable: React.FC<DraggableProps> = ({
+  children,
+  data,
+  style,
+  onMove,
+}) => {
   const startingPosition = 0;
   const x = useSharedValue(startingPosition);
   const y = useSharedValue(startingPosition);
   const z = useSharedValue(0);
   const viewRef = useRef<View>(null);
-  const { registerSquare } = useClickToMove();
+  const { registerSquare } = useClickToMove(onMove);
 
   const hitTest = useHitTest(viewRef, data, () => {
     x.value = withSpring(0, { damping: 200, stiffness: 900 });
