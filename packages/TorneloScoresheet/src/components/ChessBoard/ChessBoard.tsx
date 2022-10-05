@@ -111,6 +111,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
             position.piece !== null && (
               <TouchableOpacity
                 onPress={() => onPositionPressed?.(position.position)}
+                activeOpacity={0.8}
                 key={rowIdx}>
                 <Draggable
                   data={position.position}
@@ -128,6 +129,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
             return (
               <TouchableOpacity
                 key={rowIndex}
+                activeOpacity={0.8}
                 style={{ zIndex: -2 }}
                 onPress={() => onPositionPressed?.(square.position)}>
                 <DropTarget
