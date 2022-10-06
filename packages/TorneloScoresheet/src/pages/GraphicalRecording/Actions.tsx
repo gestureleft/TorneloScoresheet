@@ -8,27 +8,48 @@ import {
   ICON_FLIP,
   ICON_HALF,
   ICON_HASTAG,
+  ICON_REDO,
   ICON_SKIP,
   ICON_UNDO,
 } from '../../style/images';
+import {
+  ReversibleAction,
+  ReversibleActionType,
+} from '../../types/ReversibleAction';
 
 export type ActionsProps = {
   flipBoard: () => void | undefined;
   recordTime: () => void | undefined;
   endGame: () => void;
+  undo: (() => void) | undefined;
+  redo: (() => void) | undefined;
+  pushUndoAction: (action: ReversibleAction) => void;
 };
 
 const Actions: React.FC<ActionsProps> = ({
   flipBoard,
   recordTime,
   endGame,
+  undo,
+  redo,
+  pushUndoAction,
 }) => {
   const recordingState = useRecordingState();
-  const recordingMode = recordingState?.[0];
-  const undoLastMove = recordingState?.[1].undoLastMove;
-  const skipTurn = recordingState?.[1].skipTurn;
-  const toggleDraw = recordingState?.[1].toggleDraw;
-  const isFirstMove = (recordingMode?.moveHistory.length ?? 0) === 0;
+  const state = recordingState?.state;
+  const skipTurn = recordingState?.skipTurn;
+  const toggleDraw = recordingState?.toggleDraw;
+  const isFirstMove = (state?.moveHistory.length ?? 0) === 0;
+
+  const handleToggleDraw = () => {
+    if (!toggleDraw || !state) {
+      return;
+    }
+    pushUndoAction({
+      type: ReversibleActionType.ToggleDrawOffer,
+      indexOfPlyInHistory: state.moveHistory.length - 1,
+    });
+    toggleDraw(state.moveHistory.length - 1);
+  };
 
   const actionButtons: ActionButtonProps[] = [
     {
@@ -40,7 +61,7 @@ const Actions: React.FC<ActionsProps> = ({
       text: 'end',
       onPress: endGame,
       icon: <ICON_HASTAG height={40} fill={colours.white} />,
-      style: { height: 136 },
+      style: { height: 116 },
     },
     {
       text: 'time',
@@ -50,10 +71,7 @@ const Actions: React.FC<ActionsProps> = ({
     },
     {
       text: 'draw',
-      onPress: () =>
-        toggleDraw &&
-        recordingMode &&
-        toggleDraw(recordingMode.moveHistory.length - 1),
+      onPress: handleToggleDraw,
       icon: <ICON_HALF height={40} fill={colours.white} />,
       disabled: isFirstMove,
     },
@@ -61,13 +79,18 @@ const Actions: React.FC<ActionsProps> = ({
       text: 'skip',
       onPress: () => skipTurn && skipTurn(),
       icon: <ICON_SKIP height={40} fill={colours.white} />,
-      style: { height: 136 },
     },
     {
       text: 'undo',
-      onPress: () => undoLastMove && undoLastMove(),
+      onPress: () => undo && undo(),
       icon: <ICON_UNDO height={40} fill={colours.white} />,
-      disabled: isFirstMove,
+      disabled: undo === undefined,
+    },
+    {
+      text: 'redo',
+      onPress: () => redo && redo(),
+      icon: <ICON_REDO height={40} fill={colours.white} />,
+      disabled: redo === undefined,
     },
   ];
   return <ActionBar actionButtons={actionButtons} />;
