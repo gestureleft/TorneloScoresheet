@@ -54,7 +54,20 @@ const GraphicalRecording: React.FC = () => {
         promotion = await promptUserForPromotionChoice();
       }
     }
-    positionPress?.(position, promotion);
+    const maybeResult = positionPress?.(position, promotion);
+    if (!maybeResult) {
+      return;
+    }
+    if (isError(maybeResult)) {
+      showError(maybeResult.error);
+      return;
+    }
+    pushUndoAction({
+      type: ReversibleActionType.Move,
+      moveSquares: maybeResult.data.moveSquares,
+      promotion,
+      withSkip: maybeResult.data.didInsertSkip,
+    });
   };
 
   // states

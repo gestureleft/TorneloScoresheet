@@ -22,6 +22,7 @@ import { colours } from '../../style/colour';
 
 export type MakeMoveResult = {
   didInsertSkip: boolean;
+  moveSquares: MoveSquares;
 };
 
 export type RecordingStateHookType = {
@@ -48,7 +49,10 @@ export type RecordingStateHookType = {
   promptUserForPromotionChoice: () => Promise<PieceType>;
   isPawnPromotion: (moveSquares: MoveSquares) => boolean;
   pressToMoveSelectedFromSquare: HighlightedPosition | undefined;
-  positionPress: (position: Position, promotion: PieceType | undefined) => void;
+  positionPress: (
+    position: Position,
+    promotion: PieceType | undefined,
+  ) => Result<MakeMoveResult> | undefined;
 };
 
 export const makeUseRecordingState =
@@ -284,7 +288,7 @@ export const makeUseRecordingState =
         }
 
         updateBoard(historyAfterSkipAndMove);
-        return succ({ didInsertSkip: true });
+        return succ({ didInsertSkip: true, moveSquares });
       }
 
       const moveHistory = processPlayerMove(
@@ -299,7 +303,7 @@ export const makeUseRecordingState =
 
       updateBoard(moveHistory);
 
-      return succ({ didInsertSkip: false });
+      return succ({ didInsertSkip: false, moveSquares });
     };
 
     const isPawnPromotion = (moveSquares: MoveSquares): boolean => {
@@ -401,35 +405,35 @@ export const makeUseRecordingState =
     const positionPress = (
       position: Position,
       promotion: PieceType | undefined,
-    ) => {
+    ): Result<MakeMoveResult> | undefined => {
       // If there's no currently selected from square - assert that the pressed position has a piece
       if (
         !pressToMoveSelectedFromSquare &&
         !appModeState.board.find(p => p.position === position)?.piece
       ) {
-        return;
+        return undefined;
       }
       if (!pressToMoveSelectedFromSquare) {
         setPressToMoveSelectedFromSquare({
           position,
           colour: colours.lightYellow,
         });
-        return;
+        return undefined;
       }
       // The case where the user presses the same square twice -
       // we clear the squares
       if (position === pressToMoveSelectedFromSquare.position) {
         setPressToMoveSelectedFromSquare(undefined);
-        return;
+        return undefined;
       }
-      move(
+      setPressToMoveSelectedFromSquare(undefined);
+      return move(
         {
           from: pressToMoveSelectedFromSquare.position,
           to: position,
         },
         promotion,
       );
-      setPressToMoveSelectedFromSquare(undefined);
     };
 
     return {
